@@ -4,30 +4,37 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve
 from sklearn.metrics import classification_report
 import pandas as pd
+import math
 
 def data_cleaning(df):
-    '''Performs data cleansing on fields within the original 'survive table, as explored in EDA'''
-    df = df.replace({'Ejection Fraction': {'L': 'Low', 'N': 'Normal'}})
-    df['Smoke'] = df['Smoke'].str.lower()
-    df = df.replace({'Survive': {'Yes': True, 'No': False, '1': True,'0': False}, 'Smoke': {'yes': True, 'no': False},'Gender': {'Male': True, 'Female': False}})
-    df = df.rename(columns={'Gender': 'Is_Male'})
-    df = df.replace({'Ejection Fraction': {'Low': 1, 'Normal': 2, 'High': 3}, 'Diabetes': {'Normal': 0, 'Pre-diabetes': 1,'Diabetes': 2}})
-    df['Age'] = df['Age'].abs()
+    '''Performs data cleansing on fields within the original dataset, as explored in EDA'''
+    # Clean up categorical value names 
+    df = df.replace({'work_type': {'Private': 'Private Industry', 'Govt_job': 'Government Job', 'children': 'Not of Working Age','Never_worked':'Not of Working Age'}})
+    df = df.replace({'smoking_status': {'formerly smoked': 'Former Smoker', 'never smoked': 'Never Smoked', 'smokes': 'Smoker'}})
+
+    df = df.rename(columns={'gender': 'Is_Male', 'Residence_type':'Is_Urban_Residence'})
+    df = df.loc[df['Is_Male']!= 'Other']
+    df['age'] = df['age'].apply(lambda x: math.ceil(x))
+
+    # Subsequently, replace all Yes/No categorical variables as well as Gender with Boolean integers
+    df = df.replace({'Is_Male': {'Male': 1, 'Female': 0}, 'Is_Urban_Residence': {'Urban': 1, 'Rural': 0},'ever_married': {'Yes': 1, 'No': 0}})
+    df = df.astype({'stroke': 'bool'})
+
+    # Drop ID column
+    df = df.drop(['id'],axis=1)
 
     return df
 
 def data_engrg(df):
-    '''Create BMI field, and impute missing values where required.'''
-    df['BMI'] = df.apply(lambda x: x['Weight']/((x['Height']/100)**2), axis=1)
-    df = df.drop(['Height','Weight'],axis=1)
-    df = df.drop(['ID'],axis=1)
+    '''Impute for fields with missing values, and perform one-hot encoding for categorical variables'''
+    df['bmi'] = df['bmi'].fillna(df['bmi'].median())
 
-    df_final = df.copy()
-    df_final['Creatinine'] = df_final['Creatinine'].fillna(df_final['Creatinine'].median())
+    df_target = df[['stroke']]
+    df = df.drop(['stroke'], axis=1)
+    df = pd.get_dummies(df, columns = ['work_type','smoking_status'])
+    df = df.join(df_target)
 
-    df_final = df_final.drop(['Favorite color'],axis=1)
-
-    return df_final
+    return df
 
 def scaling(x):
     '''Uses Sklearn Standard Scaler to normalize input variables'''

@@ -18,7 +18,7 @@ def classifications(df):
     
     x_scaled  = scaling(x)
 
-    x_train, x_test, y_train, y_test = train_test_split(x_scaled, y, test_size=0.25, random_state = 23, stratify = y)
+    x_train, x_test, y_train, y_test = train_test_split(x_scaled, y, test_size=0.2, random_state = 23, stratify = y)
 
     # Creating tables to hold model evaluation metrics
     df_evaluation = pd.DataFrame(columns=['parameters','f1-score','ROC AUC'])
@@ -98,7 +98,7 @@ def classifications(df):
     lr_auc = generate_roc(x_test, y_test, predlabel, predictor)
     clf_nb = predictor
     df_evaluation = pd.concat([df_evaluation, pd.DataFrame.from_records([{'f1-score':f1, 'ROC AUC':lr_auc, 'Train Time': time_train}])])
-
+    
     #Evaluation Metrics
     
     df_final, select_model = model_evaluation(model_list, df_evaluation)
