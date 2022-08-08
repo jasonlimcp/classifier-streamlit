@@ -80,7 +80,7 @@ def main():
 
         submit = st.form_submit_button("Run the prediction")
         
-        st.warning("_This page is solely for learning purposes._")
+        st.warning("_Please Read: All content on this site is solely for educational purposes on machine learning concepts. Content should not be construed or relied upon as medical information, advice or opinion in any form._")
 
     if submit==False:
         st.info("Select input variables on the left for the classification model to predict likelihood of a patient's stroke event.")
@@ -210,9 +210,14 @@ def main():
 
         st.info("Based on your selections, our " + select_model + " model predicted the patient has a **" + pred + "** likelihood of encountering a stroke event.")
 
-        with st.expander("FAQ & Disclaimers"):
+        with st.expander("FAQ"):
             st.write("**How is the best-performing model selected?**")
-            st.write('Based on a product of f-1 score and ROC-AUC score, followed by ranking by model fitting time.')
+            st.write('The model selected for prediction is the highest-ranked on a product of f-1 score and ROC-AUC score, followed by ranking by model fitting time.')
+            st.write("**Where can I see the source code for this site?**")
+            st.write('The Github repository for this site can be found [here](https://github.com/jasonlimcp/classifier-streamlit).')
+            st.write("**What is the data source used for the Stroke prediction?**")
+            st.write('Data used in this classification exercise is from the [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset) on Kaggle.')
+
 
 if __name__ == "__main__":
     main()
