@@ -88,7 +88,6 @@ def main():
         st.image('src/image/kavanaugh-unsplash.jpg')
         st.caption("Image Credits: Bret Kavanaugh 2019 via Unsplash")
         
-
     if submit == True:
     
         with st.spinner('This will take a bit. Take a sip (or two) of coffee..'):
@@ -97,7 +96,7 @@ def main():
             df_output, roc_plot, classifiers, select_model = classifications(df)
 
             st.success('The following are evaluation metrics for the classifiers we have run:')
-            st.dataframe(df_output[['f1-score','ROC AUC', 'Train Time']], height = 350)
+            st.dataframe(df_output[['f1-score','ROC AUC', 'Train Time']], width = 350)
 
             st.write('The best performing model from the list is the **' + select_model + '** model.')
 
