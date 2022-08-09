@@ -12,13 +12,19 @@ def classifications(df):
     from sklearn.ensemble import RandomForestClassifier
     from scipy.stats import randint
     from sklearn.model_selection import RandomizedSearchCV
+    from imblearn.over_sampling import RandomOverSampler
 
     x = df.iloc[:,:-1]
     y = df.iloc[:,-1]
-    
+
+    # Standard Scaler
     x_scaled  = scaling(x)
 
-    x_train, x_test, y_train, y_test = train_test_split(x_scaled, y, test_size=0.2, random_state = 23, stratify = y)
+    # Oversampling the minority class
+    oversampler = RandomOverSampler(sampling_strategy='minority')
+    x_os, y_os = oversampler.fit_resample(x_scaled, y)
+
+    x_train, x_test, y_train, y_test = train_test_split(x_os, y_os, test_size=0.2, random_state = 23, stratify = y_os)
 
     # Creating tables to hold model evaluation metrics
     df_evaluation = pd.DataFrame(columns=['parameters','f1-score','ROC AUC'])
